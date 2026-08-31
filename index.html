@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>فطاير الديرة | متجر الفطائر والمعجنات الكويتي الأول 🇰🇼</title>
+  <meta name="description" content="أشهى الفطاير والمعجنات والمناقيش المخبوزة في فرن الحجر التقليدي في الكويت. توصيل سريع لكافة مناطق ومحافظات الكويت ودفع آمن عبر كي نت KNET أو كاش والطلب بالواتساب." />
+  
+  <!-- Favicon & PWA -->
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#f59e0b" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            amber: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            stone: {
+              850: '#171513',
+              900: '#1c1917',
+              950: '#0c0a09',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-stone-950">
+
+  <!-- شريط الإعلان العلوي -->
+  <div class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-stone-950 text-xs sm:text-sm font-black py-2 px-4 text-center flex items-center justify-center gap-2 shadow-md">
+    <span>🇰🇼 توصيل ساخن لجميع مناطق ومحافظات الكويت</span>
+    <span class="hidden sm:inline">•</span>
+    <span class="bg-stone-950 text-amber-400 px-2 py-0.5 rounded-full text-xs">كود خصم 10%: KUWAIT10</span>
+  </div>
+
+  <!-- الهيدر وشريط التنقل -->
+  <header class="sticky top-0 z-40 bg-stone-950/90 backdrop-blur-lg border-b border-stone-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <!-- الشعار -->
+      <a href="index.html" class="flex items-center gap-2 group">
+        <img src="assets/logo.svg" alt="فطاير الديرة" class="h-12 w-auto transform group-hover:scale-105 transition">
+      </a>
+
+      <!-- حقل البحث السريع (شاشات متوسطة وكبيرة) -->
+      <div class="hidden md:flex flex-1 max-w-md mx-6 relative">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="ابحث عن فطيرة، صفيحة، بيتزا، بوكسات..." 
+          class="w-full bg-stone-900 border border-stone-800 rounded-2xl py-2.5 pr-11 pl-4 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-amber-500 transition"
+        />
+        <i data-lucide="search" class="w-5 h-5 text-stone-500 absolute right-3.5 top-3"></i>
+      </div>
+
+      <!-- الإجراءات وأزرار التنقل -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- رابط التتبع -->
+        <a href="track.html" class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-xs font-bold text-stone-300 transition">
+          <i data-lucide="map-pin" class="w-4 h-4 text-amber-400"></i>
+          <span>تتبع طلبك</span>
+        </a>
+
+        <!-- لوحة التحكم للمطبخ والإدارة -->
+        <a href="admin.html" class="hidden lg:flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-xs font-bold text-stone-400 hover:text-white transition" title="لوحة إدارة المطبخ والطلبات">
+          <i data-lucide="shield-check" class="w-4 h-4 text-stone-400"></i>
+          <span>لوحة المطبخ</span>
+        </a>
+
+        <!-- زر السلة المباشر -->
+        <button 
+          onclick="toggleCartDrawer(true)" 
+          class="relative px-4 py-2.5 bg-amber-500 hover:bg-amber-400 active:scale-95 text-stone-950 font-black rounded-2xl flex items-center gap-2.5 shadow-lg shadow-amber-500/20 transition">
+          <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+          <span class="hidden sm:inline text-sm">السلة</span>
+          <span class="cart-badge-count hidden w-5 h-5 bg-stone-950 text-amber-400 text-xs font-black rounded-full flex items-center justify-center">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- حقل البحث للهواتف -->
+    <div class="md:hidden px-4 pb-3">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="search-input-mobile" 
+          placeholder="ابحث عن فطاير، مناقيش، بيتزا..." 
+          class="w-full bg-stone-900 border border-stone-800 rounded-xl py-2 pr-10 pl-3 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
+          oninput="searchQuery = this.value; renderProducts();"
+        />
+        <i data-lucide="search" class="w-4 h-4 text-stone-500 absolute right-3 top-2.5"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- القسم الترويجي الرئيسي (Hero Section) -->
+  <section class="relative overflow-hidden hero-glow pt-8 pb-12 sm:pt-14 sm:pb-20 border-b border-stone-800/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- النصوص الترحيبية -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-right">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs sm:text-sm font-bold">
+            <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+            <span>فطاير ومعجنات كويتية أصلية على الحطب منذ 1994</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+            ألذ فطاير ومعجنات <br class="hidden sm:inline" />
+            <span class="gold-gradient-text">ساخنة من الفرن الحجري لديرتكم</span>
+          </h1>
+
+          <p class="text-stone-300 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed">
+            استمتع بتشكيلتنا الفاخرة من جبنة العكاوي البلدية، القشقوان، الزعتر، صفيحة اللحم، وبوكسات الجمعات والديوانية مع توصيل حار وسريع ودفع فوري بكي نت أو بالواتساب.
+          </p>
+
+          <!-- أزرار الإجراءات السريعة ومميزات الخدمة -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+            <a href="#menu-section" class="px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-2xl flex items-center gap-2 shadow-xl shadow-amber-500/25 transition transform hover:-translate-y-0.5">
+              <i data-lucide="utensils" class="w-5 h-5"></i>
+              <span>استعرض المنيو واطلب</span>
+            </a>
+            <button onclick="setCategory('mini_boxes')" class="px-6 py-3.5 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-white font-bold rounded-2xl flex items-center gap-2 transition">
+              <i data-lucide="package" class="w-5 h-5 text-amber-400"></i>
+              <span>بوكسات المناسبات والجمعات</span>
+            </button>
+          </div>
+
+          <!-- علامات الثقة والجودة في الكويت -->
+          <div class="grid grid-cols-3 gap-4 pt-6 border-t border-stone-850 max-w-lg mx-auto lg:mx-0 text-center">
+            <div class="p-3 bg-stone-900/60 rounded-2xl border border-stone-800">
+              <div class="text-amber-400 font-black text-lg">100%</div>
+              <div class="text-[11px] text-stone-400 font-bold">لحوم واجبان بلدية طازجة</div>
+            </div>
+            <div class="p-3 bg-stone-900/60 rounded-2xl border border-stone-800">
+              <div class="text-amber-400 font-black text-lg">30 دقيقة</div>
+              <div class="text-[11px] text-stone-400 font-bold">متوسط وقت التوصيل</div>
+            </div>
+            <div class="p-3 bg-stone-900/60 rounded-2xl border border-stone-800">
+              <div class="text-amber-400 font-black text-lg">K-NET</div>
+              <div class="text-[11px] text-stone-400 font-bold">دفع آمن وفوري</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- صورة البانر الترويجية التفاعلية -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border border-amber-500/20 group">
+            <img 
+              src="https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?auto=format&fit=crop&w=900&q=80" 
+              alt="فطاير كويتية ساخنة" 
+              class="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent opacity-90"></div>
+            
+            <!-- كارت العرض العائم -->
+            <div class="absolute bottom-4 right-4 left-4 p-4 rounded-2xl bg-stone-900/90 backdrop-blur-md border border-stone-700/80 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-amber-400 font-bold block">🔥 العرض الأكثر مبيعاً</span>
+                <h4 class="text-sm font-black text-white">بوكس الديرة الملكي (50 ميني)</h4>
+                <p class="text-xs text-stone-400">فطاير منوعة + صوصات فاخرة</p>
+              </div>
+              <div class="text-left">
+                <span class="text-lg font-black text-amber-400">8.500 د.ك</span>
+                <button onclick="quickAddToCart('box-royal-50')" class="block mt-1 px-3 py-1 bg-amber-500 text-stone-950 text-xs font-black rounded-lg hover:bg-amber-400 transition">
+                  اطلب الآن
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- شريط الفلاتر والتصنيفات (Sticky Categories) -->
+  <section id="menu-section" class="sticky top-20 z-30 bg-stone-950/95 backdrop-blur-md border-b border-stone-800/80 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- أزرار التصنيفات الأفقية قابلة للتمرير -->
+      <div id="categories-container" class="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+        <!-- يتم ملء التصنيفات عبر JS -->
+      </div>
+
+      <!-- فلاتر سريعة للتاجز (نباتي، سبايسي، الأكثر طلباً) -->
+      <div class="flex items-center gap-2 mt-3 overflow-x-auto text-xs">
+        <span class="text-stone-500 font-bold ml-1">تصفية سريعة:</span>
+        <button class="tag-filter-btn px-3 py-1 rounded-full bg-amber-500 text-stone-950 font-bold transition" data-tag="all" onclick="filterByTag('all')">الكل</button>
+        <button class="tag-filter-btn px-3 py-1 rounded-full bg-stone-800 text-stone-300 font-bold hover:text-white transition" data-tag="الأكثر طلباً" onclick="filterByTag('الأكثر طلباً')">⭐ الأكثر طلباً</button>
+        <button class="tag-filter-btn px-3 py-1 rounded-full bg-stone-800 text-stone-300 font-bold hover:text-white transition" data-tag="نباتي" onclick="filterByTag('نباتي')">🌱 نباتي</button>
+        <button class="tag-filter-btn px-3 py-1 rounded-full bg-stone-800 text-stone-300 font-bold hover:text-white transition" data-tag="حار" onclick="filterByTag('حار')">🌶️ سبايسي</button>
+        <button class="tag-filter-btn px-3 py-1 rounded-full bg-stone-800 text-stone-300 font-bold hover:text-white transition" data-tag="جديد" onclick="filterByTag('جديد')">✨ جديد</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- شبكة المنتجات (Product Grid) -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1">
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- يتم حقن كروت المنتجات ديناميكياً عبر JS -->
+    </div>
+  </main>
+
+  <!-- سكشن بوكسات المناسبات والديوانية -->
+  <section class="bg-stone-900/60 border-y border-stone-800/80 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-amber-400 font-black text-sm tracking-wider uppercase">جمعاتكم تحلى معنا 🇰🇼</span>
+        <h2 class="text-3xl font-black text-white mt-1">بوكسات الديوانية والدوامات والمناسبات</h2>
+        <p class="text-stone-400 text-sm mt-2">تشكيلات فاخرة من الفطائر والميني معجنات مجهزة في بوكسات حرارية تحافظ على السخونة والقرمشة حتى وصولها.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-stone-900 border border-stone-800 rounded-3xl p-6 hover:border-amber-500/40 transition">
+          <div class="text-3xl mb-3">👑</div>
+          <h3 class="text-xl font-black text-white">بوكس الديرة الملكي</h3>
+          <p class="text-stone-400 text-xs mt-2 leading-relaxed">50 قطعة ميني مشكلة من ألذ أنواع الفطائر والبيتزا مع 4 صوصات تغميس خاصة.</p>
+          <div class="mt-4 flex items-center justify-between pt-4 border-t border-stone-800">
+            <span class="text-amber-400 font-black text-lg">8.500 د.ك</span>
+            <button onclick="quickAddToCart('box-royal-50')" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold rounded-xl text-xs transition">طلب البوكس</button>
+          </div>
+        </div>
+
+        <div class="bg-stone-900 border border-stone-800 rounded-3xl p-6 hover:border-amber-500/40 transition">
+          <div class="text-3xl mb-3">☀️</div>
+          <h3 class="text-xl font-black text-white">بوكس ترويقة الصباح</h3>
+          <p class="text-stone-400 text-xs mt-2 leading-relaxed">24 قطعة ميني خفيفة تشمل الزعتر، الجبنة البيضاء، اللبنة بالعسل، والسبانخ.</p>
+          <div class="mt-4 flex items-center justify-between pt-4 border-t border-stone-800">
+            <span class="text-amber-400 font-black text-lg">4.750 د.ك</span>
+            <button onclick="quickAddToCart('box-breakfast-24')" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold rounded-xl text-xs transition">طلب البوكس</button>
+          </div>
+        </div>
+
+        <div class="bg-stone-900 border border-stone-800 rounded-3xl p-6 hover:border-amber-500/40 transition">
+          <div class="text-3xl mb-3">🍕</div>
+          <h3 class="text-xl font-black text-white">بوكس ميني بيتزا وشاورما</h3>
+          <p class="text-stone-400 text-xs mt-2 leading-relaxed">20 قطعة مقرمشة للأطفال والشباب تجمع بين البيتزا الإيطالية وفطائر الشاورما.</p>
+          <div class="mt-4 flex items-center justify-between pt-4 border-t border-stone-800">
+            <span class="text-amber-400 font-black text-lg">4.950 د.ك</span>
+            <button onclick="quickAddToCart('box-mini-pizza-20')" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold rounded-xl text-xs transition">طلب البوكس</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- آراء وتقييمات العملاء في الكويت -->
+  <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-2xl sm:text-3xl font-black text-white">ماذا يقول عملاؤنا في الكويت؟ ⭐</h2>
+      <p class="text-stone-400 text-sm mt-2">ثقة أكثر من 50,000 زبون في مختلف المحافظات</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-stone-900/80 border border-stone-800 rounded-3xl p-6">
+        <div class="flex text-amber-400 mb-3">★★★★★</div>
+        <p class="text-stone-300 text-sm italic">"أفضل فطيرة جبنة عكاوي وسبانخ بالكويت بلا منازع! العجينة خفيفة وهشة وتوصلك حارة جنها توها طالعة من الفرن."</p>
+        <div class="mt-4 pt-4 border-t border-stone-800 flex items-center justify-between text-xs text-stone-400">
+          <span class="font-bold text-white">مبارك الشمري</span>
+          <span>الجهراء</span>
+        </div>
+      </div>
+
+      <div class="bg-stone-900/80 border border-stone-800 rounded-3xl p-6">
+        <div class="flex text-amber-400 mb-3">★★★★★</div>
+        <p class="text-stone-300 text-sm italic">"طلبنا بوكس الديرة الملكي لديوانيتنا يوم الجمعة، الكل سألني من وين طالب الفطاير! بيضتوا الوجه يعطيكم العافية."</p>
+        <div class="mt-4 pt-4 border-t border-stone-800 flex items-center justify-between text-xs text-stone-400">
+          <span class="font-bold text-white">سالم العوضي</span>
+          <span>الجابرية</span>
+        </div>
+      </div>
+
+      <div class="bg-stone-900/80 border border-stone-800 rounded-3xl p-6">
+        <div class="flex text-amber-400 mb-3">★★★★★</div>
+        <p class="text-stone-300 text-sm italic">"سرعة التوصيل وسهولة الدفع بكي نت والطلب بالواتساب ممتازة جداً. منقوشة المحمرة بالقشقوان إدمان!"</p>
+        <div class="mt-4 pt-4 border-t border-stone-800 flex items-center justify-between text-xs text-stone-400">
+          <span class="font-bold text-white">دلال المطيري</span>
+          <span>صباح السالم</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- فروعنا وأوقات العمل -->
+  <section class="bg-stone-900/90 border-t border-stone-800 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center md:text-right">
+        <div>
+          <h4 class="font-black text-white text-base mb-2">🏪 فرع السالمية (الرئيسي)</h4>
+          <p class="text-stone-400 text-xs">شارع سالم المبارك - بجانب مجمع البستان</p>
+          <p class="text-amber-400 text-xs font-bold mt-1">خدمة 24 ساعة يومياً</p>
+        </div>
+        <div>
+          <h4 class="font-black text-white text-base mb-2">🏪 فرع شرق (العاصمة)</h4>
+          <p class="text-stone-400 text-xs">شارع أحمد الجابر - مقابل مجمع دسمان</p>
+          <p class="text-amber-400 text-xs font-bold mt-1">من 6:00 ص إلى 2:00 فجراً</p>
+        </div>
+        <div>
+          <h4 class="font-black text-white text-base mb-2">🏪 فرع العارضية الحرفية</h4>
+          <p class="text-stone-400 text-xs">المنطقة الحرفية - مجمع المطاعم</p>
+          <p class="text-amber-400 text-xs font-bold mt-1">من 6:00 ص إلى 1:00 فجراً</p>
+        </div>
+        <div>
+          <h4 class="font-black text-white text-base mb-2">🏪 فرع العقيلة (الأحمدي)</h4>
+          <p class="text-stone-400 text-xs">بجانب ذا جيت مول (The Gate Mall)</p>
+          <p class="text-amber-400 text-xs font-bold mt-1">من 6:00 ص إلى 2:00 فجراً</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- الفوتر -->
+  <footer class="bg-stone-950 border-t border-stone-800/80 py-8 text-xs text-stone-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <img src="assets/logo.svg" alt="فطاير الديرة" class="h-8 w-auto">
+        <span>© 2026 فطاير ومعجنات الديرة الكويتية. جميع الحقوق محفوظة.</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="track.html" class="hover:text-amber-400 transition">تتبع الطلبات</a>
+        <a href="admin.html" class="hover:text-amber-400 transition">دخول الإدارة</a>
+        <a href="https://wa.me/96599887766" target="_blank" class="hover:text-emerald-400 transition flex items-center gap-1">
+          <i data-lucide="message-circle" class="w-4 h-4 text-emerald-500"></i> خدمة العملاء (واتساب)
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= سلة المشتريات الجانبية (Cart Drawer) ================= -->
+  <div id="cart-backdrop" onclick="toggleCartDrawer(false)" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+  <div id="cart-drawer" class="fixed inset-y-0 left-0 w-full max-w-md bg-stone-950 border-r border-stone-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <!-- رأس السلة -->
+    <div class="p-5 border-b border-stone-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="shopping-bag" class="w-5 h-5 text-amber-400"></i>
+        <h3 class="font-black text-lg text-white">سلة المشتريات</h3>
+        <span class="cart-badge-count px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold">0</span>
+      </div>
+      <button onclick="toggleCartDrawer(false)" class="w-8 h-8 rounded-full bg-stone-900 text-stone-400 hover:text-white flex items-center justify-center">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- محتوى السلة -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-4">
+      <div id="cart-empty-state" class="py-20 text-center text-stone-500">
+        <i data-lucide="shopping-cart" class="w-16 h-16 mx-auto mb-3 text-stone-700"></i>
+        <p class="font-bold text-stone-300 text-base">سلتك لا تزال فارغة!</p>
+        <p class="text-xs text-stone-500 mt-1">اختر ما تشتهيه من الفطاير والمعجنات الطازجة</p>
+      </div>
+      <div id="cart-items-list" class="space-y-3"></div>
+    </div>
+
+    <!-- فوتر وحسابات السلة -->
+    <div id="cart-footer-summary" class="p-5 bg-stone-900/90 border-t border-stone-800 space-y-4">
+      <!-- حقل كوبون الخصم -->
+      <div class="flex gap-2">
+        <input 
+          type="text" 
+          id="coupon-input" 
+          placeholder="كود الخصم (مثال: KUWAIT10)" 
+          class="flex-1 bg-stone-950 border border-stone-700 rounded-xl px-3 py-2 text-xs text-white uppercase placeholder-stone-500 focus:outline-none focus:border-amber-500"
+        />
+        <button onclick="applyCouponCode()" class="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold rounded-xl transition">
+          تطبيق
+        </button>
+      </div>
+
+      <!-- ملخص الحساب -->
+      <div class="space-y-1.5 text-xs text-stone-300">
+        <div class="flex justify-between">
+          <span>المجموع الفرعي:</span>
+          <span id="cart-subtotal" class="font-bold">0.000 د.ك</span>
+        </div>
+        <div id="cart-discount-row" class="flex justify-between text-emerald-400 hidden">
+          <span>خصم الكوبون:</span>
+          <span id="cart-discount" class="font-bold">0.000 د.ك</span>
+        </div>
+        <div class="flex justify-between">
+          <span>رسوم التوصيل:</span>
+          <span id="cart-delivery" class="font-bold">1.000 د.ك</span>
+        </div>
+        <div class="flex justify-between text-base font-black text-white pt-2 border-t border-stone-800">
+          <span>الإجمالي النهائي:</span>
+          <span id="cart-total" class="text-amber-400">0.000 د.ك</span>
+        </div>
+      </div>
+
+      <!-- زر الانتقال للدفع -->
+      <button onclick="openCheckoutModal()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-2xl flex items-center justify-center gap-2 shadow-xl shadow-amber-500/20 transition">
+        <span>متابعة إتمام الطلب</span>
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= نافذة تخصيص المنتج (Product Modal) ================= -->
+  <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-stone-900 border border-stone-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto" id="product-modal-content">
+      <!-- يتم حقن التفاصيل عبر JS -->
+    </div>
+  </div>
+
+  <!-- ================= نافذة إتمام الطلب (Checkout Modal) ================= -->
+  <div id="checkout-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-stone-900 border border-stone-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative my-8">
+      <!-- رأس المودال -->
+      <div class="p-5 border-b border-stone-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="check-circle" class="w-5 h-5 text-amber-400"></i>
+          <h3 class="font-black text-lg text-white">إتمام وتأكيد الطلب 🇰🇼</h3>
+        </div>
+        <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-stone-800 text-stone-400 hover:text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- تبويبات التوصيل أو الاستلام -->
+      <div class="p-4 border-b border-stone-800 flex gap-2 bg-stone-950">
+        <button id="tab-delivery" onclick="setDeliveryTab('delivery')" class="flex-1 py-2.5 rounded-xl bg-amber-500 text-stone-950 font-bold text-xs flex items-center justify-center gap-2 transition">
+          <i data-lucide="truck" class="w-4 h-4"></i>
+          <span>توصيل لعنواني</span>
+        </button>
+        <button id="tab-pickup" onclick="setDeliveryTab('pickup')" class="flex-1 py-2.5 rounded-xl bg-stone-800 text-stone-300 font-bold text-xs flex items-center justify-center gap-2 transition">
+          <i data-lucide="store" class="w-4 h-4"></i>
+          <span>استلام من الفرع</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleOrderSubmission(event)" class="p-6 space-y-6">
+        <!-- بيانات العميل الأساسية -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-stone-300 mb-1.5">👤 الاسم الكامل:</label>
+            <input type="text" id="customer-name" required placeholder="مثال: جاسم المطيري" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-300 mb-1.5">📱 رقم الهاتف (الكويت):</label>
+            <div class="flex" dir="ltr">
+              <span class="px-3 py-2.5 bg-stone-800 border border-stone-700 rounded-l-xl text-stone-300 text-sm font-bold flex items-center">+965</span>
+              <input type="tel" id="customer-phone" required placeholder="99112233" class="w-full bg-stone-950 border border-stone-800 rounded-r-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- حقول عنوان التوصيل بالكويت -->
+        <div id="delivery-address-fields" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-stone-300 mb-1.5">📍 المحافظة:</label>
+              <select id="checkout-governorate" required class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                <!-- معبأ عبر JS -->
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-stone-300 mb-1.5">🏙️ المنطقة:</label>
+              <select id="checkout-area" required disabled class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 disabled:opacity-50">
+                <option value="">-- اختر المحافظة أولاً --</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="delivery-fee-notice" class="text-xs text-stone-400 bg-stone-950 p-2.5 rounded-xl border border-stone-800">
+            يرجى تحديد المحافظة والمنطقة لحساب رسوم ووقت التوصيل التقديري.
+          </div>
+
+          <!-- تفاصيل العنوان الكويتي -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-stone-400 mb-1">القطعة:</label>
+              <input type="text" id="address-block" placeholder="ق 3" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-500" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-stone-400 mb-1">الشارع:</label>
+              <input type="text" id="address-street" placeholder="شارع 14" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-500" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-stone-400 mb-1">الجادة (اختياري):</label>
+              <input type="text" id="address-avenue" placeholder="جادة 2" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-500" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-stone-400 mb-1">المنزل/المبنى:</label>
+              <input type="text" id="address-house" placeholder="منزل 12" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-500" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-stone-400 mb-1">الدور / رقم الشقة (اختياري):</label>
+              <input type="text" id="address-apartment" placeholder="الدور 2 - شقة 4" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-500" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-stone-400 mb-1">ملاحظات العنوان / علامة مميزة:</label>
+              <input type="text" id="address-notes" placeholder="بجانب المسجد، مدخل خلفي..." class="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- حقل اختيار الفرع للاستلام -->
+        <div id="pickup-branch-fields" class="space-y-3 hidden">
+          <label class="block text-xs font-bold text-stone-300">اختر الفرع للاستلام:</label>
+          <select id="pickup-branch-select" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+            <option value="فرع السالمية">فرع السالمية - شارع سالم المبارك</option>
+            <option value="فرع شرق">فرع شرق - شارع أحمد الجابر</option>
+            <option value="فرع العارضية">فرع العارضية الحرفية - مجمع المطاعم</option>
+            <option value="فرع العقيلة">فرع العقيلة - بجانب ذا جيت مول</option>
+          </select>
+          <p class="text-xs text-emerald-400">✨ طلبك سيكون جاهزاً وساخناً خلال 15 - 20 دقيقة من التأكيد.</p>
+        </div>
+
+        <!-- اختيار طريقة الدفع -->
+        <div>
+          <label class="block text-xs font-bold text-stone-300 mb-2">💳 اختر طريقة الدفع المفضلة:</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <label class="flex items-center gap-3 p-3 bg-stone-950 border border-stone-800 rounded-2xl cursor-pointer hover:border-amber-500 transition has-[:checked]:border-amber-500 has-[:checked]:bg-amber-500/10">
+              <input type="radio" name="payment-method" value="knet" checked class="text-amber-500" />
+              <div>
+                <span class="text-xs font-bold text-white block">بوابة K-NET (كي نت)</span>
+                <span class="text-[10px] text-stone-400">دفع فوري ببطاقات البنوك الكويتية</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 bg-stone-950 border border-stone-800 rounded-2xl cursor-pointer hover:border-amber-500 transition has-[:checked]:border-amber-500 has-[:checked]:bg-amber-500/10">
+              <input type="radio" name="payment-method" value="whatsapp" class="text-amber-500" />
+              <div>
+                <span class="text-xs font-bold text-emerald-400 block">طلب بالواتساب 💬</span>
+                <span class="text-[10px] text-stone-400">إرسال الفاتورة وتأكيد مباشر</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 bg-stone-950 border border-stone-800 rounded-2xl cursor-pointer hover:border-amber-500 transition has-[:checked]:border-amber-500 has-[:checked]:bg-amber-500/10">
+              <input type="radio" name="payment-method" value="cash" class="text-amber-500" />
+              <div>
+                <span class="text-xs font-bold text-white block">الدفع عند الاستلام</span>
+                <span class="text-[10px] text-stone-400">نقداً أو جهاز الكي نت المتنقل</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- زر التأكيد النهائي -->
+        <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-2xl text-base shadow-xl shadow-amber-500/25 transition">
+          تأكيد الطلب والمتابعة
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= بوابة الدفع K-NET المحاكية (KNET Payment Modal) ================= -->
+  <div id="knet-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-stone-900 border border-stone-700 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-stone-100">
+      <!-- شعار كي نت الرسمي والشريط العلوي -->
+      <div class="knet-card-box p-6 text-white text-center relative">
+        <button onclick="closeKnetGateway()" class="absolute top-4 left-4 text-white/70 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <img src="assets/knet-logo.svg" alt="KNET" class="h-10 mx-auto mb-2">
+        <p class="text-xs tracking-wider opacity-90">شبكة الكويت الوطنية للمدفوعات الإلكترونية</p>
+      </div>
+
+      <div class="p-6 space-y-4 text-xs">
+        <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 flex justify-between items-center">
+          <div>
+            <span class="text-stone-400 block">المتجر / التاجر:</span>
+            <strong class="text-white">فطاير ومعجنات الديرة (AL-DEERAH)</strong>
+          </div>
+          <div class="text-left">
+            <span class="text-stone-400 block">المبلغ الإجمالي:</span>
+            <strong id="knet-amount" class="text-amber-400 text-sm font-black">0.000 KWD</strong>
+          </div>
+        </div>
+
+        <!-- اختيار البنك -->
+        <div>
+          <label class="block text-stone-300 font-bold mb-1">اختر بنك البطاقة:</label>
+          <select id="knet-bank-select" class="w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2 text-white">
+            <!-- معبأ عبر JS -->
+          </select>
+        </div>
+
+        <!-- رقم البطاقة -->
+        <div>
+          <label class="block text-stone-300 font-bold mb-1">رقم بطاقة السحب الآلي:</label>
+          <div class="flex gap-2" dir="ltr">
+            <input type="text" id="knet-card-prefix" value="5196" readonly class="w-20 bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-center text-amber-400 font-mono font-bold" />
+            <input type="text" id="knet-card-number" placeholder="XXXX XXXX XXXX" maxlength="12" class="flex-1 bg-stone-950 border border-stone-700 rounded-xl px-3 py-2 font-mono text-white text-center tracking-widest focus:border-amber-500" value="7890123456" />
+          </div>
+        </div>
+
+        <!-- تاريخ الانتهاء والرقم السري -->
+        <div class="grid grid-cols-2 gap-3" dir="ltr">
+          <div>
+            <label class="block text-stone-300 font-bold mb-1 text-right">تاريخ الانتهاء:</label>
+            <div class="flex gap-1">
+              <select class="bg-stone-950 border border-stone-700 rounded-xl px-2 py-2 text-white text-xs w-1/2 text-center">
+                <option>09</option><option>10</option><option>11</option><option>12</option>
+              </select>
+              <select class="bg-stone-950 border border-stone-700 rounded-xl px-2 py-2 text-white text-xs w-1/2 text-center">
+                <option>2026</option><option>2027</option><option>2028</option><option>2029</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-stone-300 font-bold mb-1 text-right">الرقم السري (PIN):</label>
+            <input type="password" id="knet-card-pin" placeholder="••••" maxlength="4" class="w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2 font-mono text-center text-white focus:border-amber-500" value="1234" />
+          </div>
+        </div>
+
+        <!-- زر الدفع -->
+        <div class="pt-2">
+          <button id="knet-submit-btn" onclick="processKnetPayment()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-xl text-sm transition shadow-lg">
+            إتمام الدفع الآمن بـ K-NET
+          </button>
+          <button onclick="closeKnetGateway()" class="w-full mt-2 py-2 text-stone-400 hover:text-white text-xs">
+            إلغاء والعودة للمتجر
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- زر الواتساب العائم للتواصل الفوري -->
+  <a href="https://wa.me/96599887766?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D9%81%D8%B7%D8%A7%D9%8A%D8%B1%20%D8%A7%D9%84%D8%AF%D9%8A%D8%B1%D8%A9" target="_blank" class="fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition shadow-emerald-500/30" title="تواصل معنا واتساب">
+    <i data-lucide="message-circle" class="w-7 h-7"></i>
+  </a>
+
+  <!-- استدعاء ملفات الجافاسكريبت -->
+  <script src="js/kuwait-areas.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

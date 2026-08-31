@@ -1,0 +1,19 @@
+{
+  "name": "فطاير ومعجنات الديرة الكويتية",
+  "short_name": "فطاير الديرة",
+  "description": "متجر فطاير ومعجنات كويتي فاخر مع توصيل ساخن ودفع كي نت KNET والواتساب",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0c0a09",
+  "theme_color": "#f59e0b",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "assets/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

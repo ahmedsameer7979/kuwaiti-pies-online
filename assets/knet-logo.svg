@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <rect width="200" height="60" rx="8" fill="#005A9C"/>
+  <text x="35" y="40" font-family="'Arial Black', sans-serif" font-weight="900" font-size="28" fill="#FFFFFF" letter-spacing="2">
+    KNET
+  </text>
+  <path d="M140 18 L160 18 L148 42 L128 42 Z" fill="#F39200"/>
+  <circle cx="165" cy="30" r="6" fill="#FFFFFF"/>
+</svg>
